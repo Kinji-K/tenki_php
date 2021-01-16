@@ -3,14 +3,23 @@ header("Content-type: text/plain; charset=UTF-8");
 $today = date("Y/m/d");
 
 $url = 'https://www.drk7.jp/weather/xml/13.xml';
-$res = file_get_contents($url);
-$xml = htmlspecialchars($res,ENT_QUOTES);
+// $res = file_get_contents($url);
+// $xml = htmlspecialchars($res,ENT_QUOTES);
 $filename = 'webhook.txt';
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_HEADER, false);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+$xml = curl_exec($ch);
+curl_close($ch);
 
 $dom = new DOMDocument('1.0','UTF-8');
 $dom->preserveWhiteSpace = false;
 $dom->formatOutput = true;
-$dom->loadXML($res);
+$dom->loadXML($xml);
 $rainfall = 0;
 
 $xpath = new DOMXPath($dom);
