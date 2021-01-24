@@ -3,8 +3,6 @@ header("Content-type: text/plain; charset=UTF-8");
 $today = date("Y/m/d");
 
 $url = 'https://www.drk7.jp/weather/xml/13.xml';
-// $res = file_get_contents($url);
-// $xml = htmlspecialchars($res,ENT_QUOTES);
 $filename = 'webhook.txt';
 
 $ch = curl_init();
@@ -31,7 +29,8 @@ foreach($result as $node){
         $rainfall = (int) $node->nodeValue;
     }
 }
-$rain_color = "#0000".sprintf("%02X",dechex($rainfall * 255 / 100));
+
+$rain_color = "#0000".sprintf("%02X",intval($rainfall / 100 * 256));
 
 $result = $xpath->query("//area[@id = \"東京地方\"]/info[@date = \"$today\"]/weather")->item(0);
 $string = $result->nodeValue;
@@ -48,10 +47,6 @@ if (strpos($string,"雪")){
 } elseif (strpos($string,"くもり") !== false){
     $weather_color = "#C0C0C0";
 }
-
-//$fp = fopen($filename, 'r');
-//$txt = fgets($fp);
-//$txt = str_replace(array("\r\n", "\r", "\n"), '', $txt);
 
 $txt = getenv("URL");
 
@@ -72,6 +67,7 @@ $options = array(
 curl_setopt_array($ch, $options);
 curl_exec($ch);
 curl_close($ch);
+
 echo "data,".$rain_color.",".$weather_color;
 ?>
 
