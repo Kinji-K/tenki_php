@@ -48,7 +48,8 @@ if (strpos($string,"雪")){
     $weather_color = "#C0C0C0";
 }
 
-$txt = getenv("URL");
+$txt = file_get_contents($filename);
+$txt = str_replace(array("\r","\n"),"",$txt);
 
 $message = [
     "text" => "今日の天気は「".$string."」\n降水確率は".$rainfall." %です"
